@@ -125,6 +125,26 @@ impl<'l> Layout<'l> {
         self.add(width, height, clip, add_contents)
     }
 
+    pub(crate) fn add_colored(
+        &mut self,
+        width: CellSize,
+        height: CellSize,
+        clip: bool,
+        bg_color: egui::Color32,
+        add_contents: impl FnOnce(&mut Ui),
+    ) -> Response {
+        let mut rect = self.cell_rect(&width, &height);
+        // Make sure we don't have a gap in the stripe background
+        *rect.top_mut() -= self.ui.spacing().item_spacing.y;
+        *rect.left_mut() -= self.ui.spacing().item_spacing.x;
+
+        self.ui
+            .painter()
+            .rect_filled(rect, 0.0, bg_color);
+
+        self.add(width, height, clip, add_contents)
+    }
+
     /// only needed for layouts with multiple lines, like Table
     pub fn end_line(&mut self) {
         match self.direction {

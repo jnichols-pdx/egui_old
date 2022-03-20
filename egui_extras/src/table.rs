@@ -115,6 +115,7 @@ impl<'a> TableBuilder<'a> {
                     widths: widths.clone(),
                     striped: false,
                     height,
+                    bg_color: None,
                     clicked: false,
                 };
                 header(row);
@@ -213,6 +214,7 @@ impl<'a> TableBody<'a> {
                 layout: &mut self.layout,
                 widths: self.widths.clone(),
                 striped: false,
+                bg_color: None,
                 height: skip_height,
                 clicked: false,
             }
@@ -230,6 +232,7 @@ impl<'a> TableBody<'a> {
                     layout: &mut self.layout,
                     widths: self.widths.clone(),
                     striped: self.striped && idx % 2 == 0,
+                    bg_color: None,
                     height,
                     clicked: false,
                 },
@@ -243,6 +246,7 @@ impl<'a> TableBody<'a> {
                 layout: &mut self.layout,
                 widths: self.widths.clone(),
                 striped: false,
+                bg_color: None,
                 height: skip_height,
                 clicked: false,
             }
@@ -251,11 +255,12 @@ impl<'a> TableBody<'a> {
     }
 
     /// Add row with individual height
-    pub fn row(&mut self, height: f32, row: impl FnOnce(TableRow<'a, '_>)) {
+    pub fn row(&mut self, height: f32, bg_color: Option<egui::Color32>, row: impl FnOnce(TableRow<'a, '_>)) {
         row(TableRow {
             layout: &mut self.layout,
             widths: self.widths.clone(),
             striped: self.striped && self.row_nr % 2 == 0,
+            bg_color,
             height,
             clicked: false,
         });
@@ -276,6 +281,7 @@ pub struct TableRow<'a, 'b> {
     layout: &'b mut Layout<'a>,
     widths: Vec<f32>,
     striped: bool,
+    bg_color: Option<egui::Color32>,
     height: f32,
     clicked: bool,
 }
@@ -297,10 +303,14 @@ impl<'a, 'b> TableRow<'a, 'b> {
 
         let response;
 
-        if self.striped {
-            response = self.layout.add_striped(width, height, clip, add_contents);
+        if self.bg_color.is_none() {
+            if self.striped {
+                response = self.layout.add_striped(width, height, clip, add_contents);
+            } else {
+                response = self.layout.add(width, height, clip, add_contents);
+            }
         } else {
-            response = self.layout.add(width, height, clip, add_contents);
+                response = self.layout.add_colored(width, height, clip, self.bg_color.unwrap(), add_contents);
         }
 
         if response.clicked() {
