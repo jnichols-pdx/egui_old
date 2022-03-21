@@ -30,6 +30,8 @@ impl<'a> TableBuilder<'a> {
     /// In contrast to normal egui behavior, columns/rows do *not* grow with its children!
     /// Takes all available height, so if you want something below the table, put it in a strip.
     ///
+    /// Rows may optionally specify a background color
+    ///
     /// ### Example
     /// ```
     /// # egui::__run_test_ui(|ui| {
@@ -46,7 +48,7 @@ impl<'a> TableBuilder<'a> {
     ///         });
     ///     })
     ///     .body(|mut body| {
-    ///         body.row(30.0, |mut row| {
+    ///         body.row(30.0, Some(Color32::from_rgb(255,0,255)), |mut row| {
     ///             row.col(|ui| {
     ///                 ui.label("first row growing cell");
     ///             });
