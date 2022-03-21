@@ -263,7 +263,7 @@ impl<'a> DatePickerPopup<'a> {
                             })
                             .body(|mut body| {
                                 for week in weeks {
-                                    body.row(height, |mut row| {
+                                    body.row(height, None, |mut row| {
                                         if self.calendar_week {
                                             row.col(|ui| {
                                                 ui.add(Label::new(week.number.to_string()));

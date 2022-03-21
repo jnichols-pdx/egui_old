@@ -138,9 +138,7 @@ impl<'l> Layout<'l> {
         *rect.top_mut() -= self.ui.spacing().item_spacing.y;
         *rect.left_mut() -= self.ui.spacing().item_spacing.x;
 
-        self.ui
-            .painter()
-            .rect_filled(rect, 0.0, bg_color);
+        self.ui.painter().rect_filled(rect, 0.0, bg_color);
 
         self.add(width, height, clip, add_contents)
     }

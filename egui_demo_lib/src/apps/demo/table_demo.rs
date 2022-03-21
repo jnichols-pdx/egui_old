@@ -77,7 +77,7 @@ impl super::View for TableDemo {
                                 4 => 30.0,
                                 _ => 20.0,
                             };
-                            body.row(height, |mut row| {
+                            body.row(height, None, |mut row| {
                                 row.col(|ui| {
                                     ui.label(i.to_string());
                                 });

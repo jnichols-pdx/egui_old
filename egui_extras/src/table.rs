@@ -48,7 +48,7 @@ impl<'a> TableBuilder<'a> {
     ///         });
     ///     })
     ///     .body(|mut body| {
-    ///         body.row(30.0, Some(Color32::from_rgb(255,0,255)), |mut row| {
+    ///         body.row(30.0, Some(egui::Color32::from_rgb(255,0,255)), |mut row| {
     ///             row.col(|ui| {
     ///                 ui.label("first row growing cell");
     ///             });
@@ -257,7 +257,12 @@ impl<'a> TableBody<'a> {
     }
 
     /// Add row with individual height
-    pub fn row(&mut self, height: f32, bg_color: Option<egui::Color32>, row: impl FnOnce(TableRow<'a, '_>)) {
+    pub fn row(
+        &mut self,
+        height: f32,
+        bg_color: Option<egui::Color32>,
+        row: impl FnOnce(TableRow<'a, '_>),
+    ) {
         row(TableRow {
             layout: &mut self.layout,
             widths: self.widths.clone(),
@@ -312,7 +317,9 @@ impl<'a, 'b> TableRow<'a, 'b> {
                 response = self.layout.add(width, height, clip, add_contents);
             }
         } else {
-                response = self.layout.add_colored(width, height, clip, self.bg_color.unwrap(), add_contents);
+            response =
+                self.layout
+                    .add_colored(width, height, clip, self.bg_color.unwrap(), add_contents);
         }
 
         if response.clicked() {
