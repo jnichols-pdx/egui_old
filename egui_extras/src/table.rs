@@ -37,7 +37,7 @@ use std::cmp;
 ///         });
 ///     })
 ///     .body(|mut body| {
-///         body.row(30.0, |mut row| {
+///         body.row(30.0, None, |mut row| {
 ///             row.col(|ui| {
 ///                 ui.label("first row growing cell");
 ///             });
