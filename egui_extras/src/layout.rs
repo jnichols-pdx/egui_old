@@ -1,4 +1,4 @@
-use egui::{Pos2, Rect, Response, Rgba, Sense, Ui};
+use egui::{Pos2, Rect, Response, Sense, Ui};
 
 #[derive(Clone, Copy)]
 pub(crate) enum CellSize {
@@ -12,20 +12,20 @@ pub(crate) enum CellSize {
 ///
 /// In a strip there's only one line which goes in the direction of the strip:
 ///
-/// In a horizontal strip, a `[Layout]` with horizontal `[CellDirection]` is used.
-/// Its cells go from left to right inside this `[Layout]`.
+/// In a horizontal strip, a `[StripLayout]` with horizontal `[CellDirection]` is used.
+/// Its cells go from left to right inside this `[StripLayout]`.
 ///
-/// In a table there's a `[Layout]` for each table row with a horizonal `[CellDirection]`.
+/// In a table there's a `[StripLayout]` for each table row with a horizontal `[CellDirection]`.
 /// Its cells go from left to right. And the lines go from top to bottom.
 pub(crate) enum CellDirection {
     /// Cells go from left to right
     Horizontal,
-    /// Cells go fromtop to bottom
+    /// Cells go from top to bottom
     Vertical,
 }
 
-/// Positions cells in `[CellDirection]` and starts a new line on `[Layout::end_line]`
-pub struct Layout<'l> {
+/// Positions cells in `[CellDirection]` and starts a new line on `[StripLayout::end_line]`
+pub struct StripLayout<'l> {
     ui: &'l mut Ui,
     direction: CellDirection,
     rect: Rect,
@@ -33,7 +33,7 @@ pub struct Layout<'l> {
     max: Pos2,
 }
 
-impl<'l> Layout<'l> {
+impl<'l> StripLayout<'l> {
     pub(crate) fn new(ui: &'l mut Ui, direction: CellDirection) -> Self {
         let rect = ui.available_rect_before_wrap();
         let pos = rect.left_top();
@@ -117,10 +117,9 @@ impl<'l> Layout<'l> {
         *rect.top_mut() -= self.ui.spacing().item_spacing.y;
         *rect.left_mut() -= self.ui.spacing().item_spacing.x;
 
-        let text_color: Rgba = self.ui.visuals().text_color().into();
         self.ui
             .painter()
-            .rect_filled(rect, 0.0, text_color.multiply(0.2));
+            .rect_filled(rect, 0.0, self.ui.visuals().faint_bg_color);
 
         self.add(width, height, clip, add_contents)
     }
@@ -170,8 +169,8 @@ impl<'l> Layout<'l> {
         add_contents(&mut child_ui);
     }
 
-    /// Set the rect so that the scrollview knows about our size
-    pub fn set_rect(&mut self) -> Response {
+    /// Allocate the rect in [`Self::ui`] so that the scrollview knows about our size
+    pub fn allocate_rect(&mut self) -> Response {
         let mut rect = self.rect;
         rect.set_right(self.max.x);
         rect.set_bottom(self.max.y);
